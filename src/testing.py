@@ -1,11 +1,9 @@
 #coding=utf-8
 import json
-import subprocess
-import mysql.connector
-import config
 import datetime
 import jieba
 import math
+import sqlite3
 from decimal import *
 
 pos_sentiment_dic = {}
@@ -15,32 +13,33 @@ neg_word_count = 0
 pos_prior = 0
 neg_prior = 0
 
-def load_training_data(keyword_id):
+def load_training_data(model_path):
 	global pos_sentiment_dic
 	global neg_sentiment_dic
 	global pos_word_count
 	global neg_word_count
 	global pos_prior
 	global neg_prior
-	cnx = mysql.connector.connect(host=config.db_host,user=config.db_user,passwd=config.db_password,database=config.db_database,charset='utf8')
+	cnx = sqlite3.connect(model_path+'model.db')
 	cur = cnx.cursor()
-	cur.execute('SELECT word,probability FROM sentiment_positive_word WHERE keyword_id=%s',(keyword_id,))
+	cur.execute('SELECT word,value FROM sentiment_positive_word')
 	results = cur.fetchall()
 	for result in results:
 		pos_sentiment_dic[result[0]] = result[1]
-	cur.execute('SELECT word,probability FROM sentiment_negative_word WHERE keyword_id=%s',(keyword_id,))
+	cur.execute('SELECT word,value FROM sentiment_negative_word')
 	results = cur.fetchall()
 	for result in results:
 		neg_sentiment_dic[result[0]] = result[1]
-	cur.execute('SELECT positive_word_count,negative_word_count,positive_article_count/(negative_article_count+positive_article_count),negative_article_count/(negative_article_count+positive_article_count) FROM sentiment_baseline WHERE keyword_id=%s',(keyword_id,))
+	cur.execute('SELECT positive_word_count,negative_word_count,positive_document_count,negative_document_count FROM sentiment_baseline',)
 	result = cur.fetchone()
 	pos_word_count = int(result[0])
 	neg_word_count = int(result[1])
-	pos_prior = float(result[2])
-	neg_prior = float(result[3])
+	positive_document_count = float(result[2])
+	negative_document_count = float(result[3])
+	pos_prior = positive_document_count/(negative_document_count+positive_document_count)
+	neg_prior = negative_document_count/(negative_document_count+positive_document_count)
 
 def test_sentance(input_sentence):
-	jieba.load_userdict('user_dic.dic')
 	word_list = jieba.cut(input_sentence.strip())
 	#print ','.join(word_list).encode('utf-8')
 	pos_result = math.log(pos_prior)
@@ -63,8 +62,8 @@ def test_sentance(input_sentence):
 
 
 if __name__ == '__main__':
-	#print ','.join(get_article_list('2015-05-05','2015-05-06','709'))
-	load_training_data(-1)
+	#jieba.load_userdict('user_dic.dic')
+	load_training_data('model/')
 	#result = test_sentance('她是誰 他承認關我屁事 幹她娘的')
 	result = test_sentance('民進黨的政治學者，想去大陸出賣台灣，結果被拒絕了，悲哀~')
 	if result['pos'] > result['neg']:
