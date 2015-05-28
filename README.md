@@ -19,12 +19,14 @@ pip install -r requirements.txt
 ----------------------
 * Training
 	* 將正/負訓練資料放置`data`資料夾下
-	* ```
+	* 
+	```
 		cd examples
 		python training_example.py
 	```
 * Testing
-	* ```
+	* 
+	```
 		cd examples
 		python testing_example.py
 	```
