@@ -22,7 +22,9 @@ def read_data_file(file_name):
 		output.append(preprocess(doc))
 	return output
 
-def training(positive_file_name,negative_file_name,model_path):
+def training(positive_file_name,negative_file_name,model_path,user_dic_name=''):
+	if user_dic_name != '':
+		jieba.load_userdict(user_dic_name)
 	pos_data_list = []
 	cnx = sqlite3.connect(model_path+'model.db')
 	cur = cnx.cursor()

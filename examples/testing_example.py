@@ -3,7 +3,7 @@ import sys
 sys.path.append('../src')
 import testing
 
-testing.load_training_data('../model/')
+testing.load_training_data('../model/','../dict/user_dic.dic')
 result = testing.test_sentance('民進黨的政治學者，想去大陸出賣台灣，結果被拒絕了，悲哀~')
 if result['pos'] > result['neg']:
 	print 'positive'

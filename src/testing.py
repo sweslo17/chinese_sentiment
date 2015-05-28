@@ -13,7 +13,9 @@ neg_word_count = 0
 pos_prior = 0
 neg_prior = 0
 
-def load_training_data(model_path):
+def load_training_data(model_path,user_dic_name=''):
+	if user_dic_name != '':
+		jieba.load_userdict(user_dic_name)
 	global pos_sentiment_dic
 	global neg_sentiment_dic
 	global pos_word_count
