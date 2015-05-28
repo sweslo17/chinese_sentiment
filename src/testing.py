@@ -59,23 +59,3 @@ def test_sentance(input_sentence):
 				neg_result += math.log(float(1)/neg_word_count)
 	#print ','.join(temp_list).encode('utf-8')
 	return {'pos':pos_result,'neg':neg_result}
-
-
-if __name__ == '__main__':
-	#jieba.load_userdict('user_dic.dic')
-	load_training_data('model/')
-	#result = test_sentance('她是誰 他承認關我屁事 幹她娘的')
-	result = test_sentance('民進黨的政治學者，想去大陸出賣台灣，結果被拒絕了，悲哀~')
-	if result['pos'] > result['neg']:
-		print 'positive'
-	elif result['neg'] > result['pos']:
-		print 'negative'
-	else:
-		print 'neutral'
-	result = test_sentance('這個消息我聽說了!!很正確!!')
-	if result['pos'] > result['neg']:
-		print 'positive'
-	elif result['neg'] > result['pos']:
-		print 'negative'
-	else:
-		print 'neutral'
